@@ -12,9 +12,17 @@ protocol BuilderProtocol {
 }
 
 final class WeatherModuleBuilder: BuilderProtocol {
+
+    private var coreNetwork: CoreNetworkServiceProtocol
+
+    init(coreNetwork: CoreNetworkServiceProtocol) {
+        self.coreNetwork = coreNetwork
+    }
+
     func build() -> UIViewController {
+        let network = WeatherNetworkService(coreNetwork: coreNetwork)
         let presenter = Presenter()
-        let interactor = Interactor(presenter: presenter)
+        let interactor = Interactor(presenter: presenter, networkService: network)
         let vc = ViewController(interactor: interactor)
         presenter.viewController = vc
         return vc

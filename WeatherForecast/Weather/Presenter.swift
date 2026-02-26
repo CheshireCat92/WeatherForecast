@@ -2,27 +2,30 @@
 //  Presenter.swift
 //  WeatherForecast
 //
-//  Created on $CURRENT_DATE.
+//  Created by Artem Kovalev on 26.02.2026.
 //
 
 import Foundation
 
-protocol PresenterProtocol {
-
+protocol PresenterProtocol: AnyObject {
+    func didFailWithError(error: String)
+    func didFetchData(data: WeatherForecastResponse)
 }
 
 final class Presenter {
-    // MARK: - Types
-    
-    // MARK: - Properties
     weak var viewController: ViewControllerProtocol?
-
-    // MARK: - Presentation logic
-    func presentData() {
-        // Format the data for display
-    }
 }
 
 extension Presenter: PresenterProtocol {
-    
+    func didFailWithError(error: String) {
+
+    }
+
+    func didFetchData(data: WeatherForecastResponse) {
+        // Format the response data for display
+        let viewModel = "Weather: \(data.current.tempC)°C in \(data.location.name), \(data.location.region), \(data.location.country)"
+
+        // Show the result to the View
+        viewController?.displayData(viewModel: viewModel)
+    }
 }

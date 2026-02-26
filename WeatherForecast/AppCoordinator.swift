@@ -8,12 +8,9 @@
 import UIKit
 
 final class AppCoordinator: BaseCoordinator {
-    convenience init(parentCoordinator: Coordinator? = nil) {
-        self.init(navigationController: UINavigationController())
-    }
 
     override func start() {
-        let coordinator = WeatherCoordinator(navigationController: self.navigationController, parentCoordinator: self)
+        let coordinator = self.cordinatorBuilder.buildForecastCoordinator(parent: self)
         runChildCoordinator(coordinator)
     }
 }

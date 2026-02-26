@@ -8,6 +8,7 @@
 import UIKit
 
 protocol Coordinator {
+    var cordinatorBuilder: CoordinatorBuilderProtocol { get }
     var childCoordinators: [Coordinator] { get }
     var navigationController: UINavigationController { get }
     var parentCoordinator: Coordinator? { get }
@@ -15,18 +16,22 @@ protocol Coordinator {
 }
 
 class BaseCoordinator: Coordinator {
+    private(set) var cordinatorBuilder: CoordinatorBuilderProtocol
     private(set) var childCoordinators = [Coordinator]()
     private(set) var navigationController: UINavigationController
     private(set) var parentCoordinator: Coordinator?
 
-    init(navigationController: UINavigationController, parentCoordinator: Coordinator? = nil) {
+    init(
+        cordinatorBuilder: CoordinatorBuilderProtocol,
+        navigationController: UINavigationController,
+        parentCoordinator: Coordinator? = nil
+    ) {
+        self.cordinatorBuilder = cordinatorBuilder
         self.navigationController = navigationController
         self.parentCoordinator = parentCoordinator
     }
 
-    func start() {
-        
-    }
+    func start() { }
 
     func runChildCoordinator(_ coordinator: Coordinator) {
         childCoordinators.append(coordinator)

@@ -8,7 +8,8 @@
 import UIKit
 
 protocol ViewControllerProtocol: AnyObject {
-
+    func showError(message: String)
+    func displayData(viewModel: String)
 }
 
 final class ViewController: UIViewController {
@@ -27,9 +28,31 @@ final class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        fetchData()
+    }
+    
+    // MARK: - Event handling
+    private func fetchData() {
+        Task {
+            await interactor.fetchData(lat: "51.5085", lon: "0.1257") // London coordinates
+        }
+    }
+    
+    // For testing with current location
+    private func fetchCurrentLocationWeather() {
+        // Get current location using CLLocationManager
+        // Then call fetchData with the coordinates
+    }
+    
+    // MARK: - Display
+    func displayData(viewModel: String) {
+        // Update the UI with the view model data
+        print("Displaying weather data: \(viewModel)")
     }
 }
 
 extension ViewController: ViewControllerProtocol {
-
+    func showError(message: String) {
+        print("Error: \(message)")
+    }
 }

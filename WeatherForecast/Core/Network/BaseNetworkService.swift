@@ -14,7 +14,7 @@ class BaseNetworkService {
         self.coreNetwork = coreNetwork
     }
 
-    func runRequest<T:Decodable>(request: NetworkRequestBuilderItem) async -> T? {
-        try? await coreNetwork.runRequest(item: request)
+    func runRequest<T:Decodable>(request: NetworkRequestBuilderItem) async -> Result<T, NetworkError> {
+        await coreNetwork.runRequest(item: request)
     }
 }

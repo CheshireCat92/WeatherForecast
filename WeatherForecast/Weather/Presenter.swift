@@ -18,7 +18,7 @@ final class Presenter {
 
 extension Presenter: PresenterProtocol {
     func didFailWithError(error: String) {
-
+        viewController?.showError(message: error)
     }
 
     func didFetchData(data: WeatherForecastResponse) {

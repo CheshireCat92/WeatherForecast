@@ -8,13 +8,19 @@
 import Foundation
 
 protocol NetworkRequestBuilderProtocol {
-    func buildFrom(_ item: NetworkRequestBuilderItem) -> URLRequest?
+    func buildFrom(_ item: NetworkRequestBuilderItem) throws -> URLRequest
 }
 
 final class NetworkRequestBuilder: NetworkRequestBuilderProtocol {
 
-    func buildFrom(_ item: NetworkRequestBuilderItem) -> URLRequest? {
-        guard var url = buildBaseUrlRequest() else { return nil }
+    func buildFrom(_ item: NetworkRequestBuilderItem) throws-> URLRequest {
+        var url: URL
+        do {
+            url = try buildBaseUrlRequest()
+        }catch {
+            throw error
+        }
+        
         if let queries = item.params()?.keys.compactMap({ URLQueryItem(name: $0, value: item.params()?[$0]) }) {
             url.append(queryItems: queries)
         }
@@ -45,13 +51,13 @@ final class NetworkRequestBuilder: NetworkRequestBuilderProtocol {
         return request
     }
 
-    private func buildBaseUrlRequest() -> URL? {
+    private func buildBaseUrlRequest() throws -> URL {
         guard
             let baseUrlString = NetworkConstants.baseUrl,
             let key = NetworkConstants.apiKey,
             let paramName = NetworkConstants.apiKeyParamName,
             var url = URL(string: baseUrlString)
-        else { return nil }
+        else { throw NetworkError.buildBaseRequestError }
         let query = URLQueryItem(name: paramName, value: key)
         return url.appending(queryItems: [query])
     }

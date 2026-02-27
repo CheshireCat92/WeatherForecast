@@ -16,6 +16,8 @@ final class ViewController: UIViewController {
 
     private var interactor: InteractorProtocol
 
+    private lazy var testButton = UIButton(frame: .zero)
+
     init(interactor: InteractorProtocol) {
         self.interactor = interactor
         super.init(nibName: nil, bundle: nil)
@@ -28,9 +30,27 @@ final class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        setupUI()
         fetchData()
     }
-    
+
+    private func setupUI() {
+        view.addSubview(testButton)
+        testButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            testButton.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            testButton.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            testButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            testButton.heightAnchor.constraint(equalToConstant: 50)
+        ])
+        testButton.backgroundColor = .red
+        testButton.addAction(UIAction { [weak self] _ in
+            self?.fetchData()
+        }, for: .touchUpInside)
+    }
+
+
+
     // MARK: - Event handling
     private func fetchData() {
         Task {
@@ -43,16 +63,15 @@ final class ViewController: UIViewController {
         // Get current location using CLLocationManager
         // Then call fetchData with the coordinates
     }
-    
-    // MARK: - Display
-    func displayData(viewModel: String) {
-        // Update the UI with the view model data
-        print("Displaying weather data: \(viewModel)")
-    }
 }
 
 extension ViewController: ViewControllerProtocol {
     func showError(message: String) {
         print("Error: \(message)")
+    }
+
+    func displayData(viewModel: String) {
+        // Update the UI with the view model data
+        print("Displaying weather data: \(viewModel)")
     }
 }

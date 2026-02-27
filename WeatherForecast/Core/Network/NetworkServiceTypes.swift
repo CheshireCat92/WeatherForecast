@@ -12,3 +12,10 @@ enum BaseRequestType: String {
 enum BaseBodyDataType {
     case String, JSON
 }
+
+enum NetworkError: Error {
+    case responseError(code: Int, message: String)
+    case requestError(message: String)
+    case decodeError
+    case buildBaseRequestError
+}

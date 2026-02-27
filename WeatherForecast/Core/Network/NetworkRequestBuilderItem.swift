@@ -8,7 +8,7 @@
 import Foundation
 
 protocol NetworkRequestBuilderItem {
-    var method: BaseRequestType {get}
+    var method: BaseRequestType { get }
     func path() -> String?
     func headers() -> [String: String]?
     func params() -> [String: String]?

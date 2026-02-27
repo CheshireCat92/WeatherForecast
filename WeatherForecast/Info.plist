@@ -8,6 +8,12 @@
 	<string>$(API_KEY_PARAM_NAME)</string>
 	<key>BASE_URL</key>
 	<string>$(BASE_URL)</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Периодически</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Всегда</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Впринципе</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

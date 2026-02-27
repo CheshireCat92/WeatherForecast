@@ -20,9 +20,12 @@ final class WeatherModuleBuilder: BuilderProtocol {
     }
 
     func build() -> UIViewController {
-        let network = WeatherNetworkService(coreNetwork: coreNetwork)
         let presenter = Presenter()
-        let interactor = Interactor(presenter: presenter, networkService: network)
+        let interactor = Interactor(
+            presenter: presenter,
+            networkService: WeatherNetworkService(coreNetwork: coreNetwork),
+            locationService: LocationService()
+        )
         let vc = ViewController(interactor: interactor)
         presenter.viewController = vc
         return vc

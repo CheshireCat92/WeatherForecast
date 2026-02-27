@@ -31,7 +31,6 @@ final class ViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupUI()
-        fetchData()
     }
 
     private func setupUI() {
@@ -53,8 +52,11 @@ final class ViewController: UIViewController {
 
     // MARK: - Event handling
     private func fetchData() {
+//        Task {
+//            await interactor.fetchData(lat: "51.5085", lon: "0.1257") // London coordinates
+//        }
         Task {
-            await interactor.fetchData(lat: "51.5085", lon: "0.1257") // London coordinates
+            await interactor.fetchLocation()
         }
     }
     

@@ -8,7 +8,6 @@
 import UIKit
 
 protocol ViewControllerProtocol: AnyObject {
-    func showError(message: String) async
     func displayData(viewModel: ForecastViewModel) async
     func displayInfoData(viewModel: InfoViewModel) async
 }
@@ -83,10 +82,5 @@ extension ViewController: ViewControllerProtocol {
     @MainActor
     func displayData(viewModel: ForecastViewModel) {
         contentView.configureWith(viewModel)
-    }
-
-    @MainActor
-    func showError(message: String) {
-        print("Error: \(message)")
     }
 }

@@ -8,7 +8,6 @@
 import Foundation
 
 protocol InteractorProtocol: AnyObject {
-//    func fetchData(lat: String, lon: String) async
     func fetchLocation() async
 }
 

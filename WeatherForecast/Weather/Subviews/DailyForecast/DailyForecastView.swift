@@ -12,13 +12,12 @@ final class DailyForecastView: UIView {
 
     private enum Constants: DSSizes {
         static let interitemSpacing: CGFloat = 10
-        static let itemHeight: CGFloat = 50
+        static let itemHeight: CGFloat = 80
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
-        configure()
     }
 
     required init?(coder: NSCoder) {
@@ -31,25 +30,16 @@ final class DailyForecastView: UIView {
         layer.cornerCurve = .circular
         clipsToBounds = true
 
-        let views = [
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView(),
-            DailyForecastDayView()
-        ]
+        setupSubViews(nil)
+    }
+
+    private func setupSubViews(_ model: DailyForecastViewModel?) {
+        subviews.forEach{ $0.removeFromSuperview() }
+
+        let views: [DailyForecastDayView] = model?.forecast.compactMap { dayModel in
+            DailyForecastDayView(model: dayModel)
+        } ?? [DailyForecastDayView]()
+
         self.add(subviews: views)
 
         views.enumerated().forEach { pair in
@@ -82,7 +72,9 @@ final class DailyForecastView: UIView {
         }
     }
 
-    private func configure() { }
+    func configureWith(_ model: DailyForecastViewModel) {
+        setupSubViews(model)
+    }
 }
 
 

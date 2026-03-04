@@ -105,6 +105,7 @@ final class ForecastContentView: UIView {
     func configureWith(_ model: ForecastViewModel) {
         currentPositionView.configureWith(model.currentPositionModel)
         hourlyForecastView.configureWith(model.hoursForecastModel)
+        dailyForecastView.configureWith(model.dailyForecastModel)
     }
 }
 

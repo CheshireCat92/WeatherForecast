@@ -63,7 +63,8 @@ final class Interactor: InteractorProtocol {
             currentPlace: response.location,
             currentDayWeather: response.forecast?.forecastday.first,
             currentWeather: response.current,
-            hoursForecast: processHourForecast(response)
+            hoursForecast: processHourForecast(response),
+            daysForecast: response.forecast?.forecastday ?? [ForecastDay]()
         )
         return model
     }
@@ -72,18 +73,14 @@ final class Interactor: InteractorProtocol {
         guard let date = Date.now.timeStampWithComponents([.year,.month,.day,.hour]) else {
             return [HourWeather]()
         }
-        var dropOffset = 0
         let data = response.forecast?.forecastday.prefix(Constants.defaultHourForecastDays).flatMap {
             $0.hour
         }.enumerated().compactMap{
             let dayEphoche = TimeInterval($0.element.timeEpoch)
-            guard dayEphoche >= date else {
-                dropOffset = $0.offset + 1
-                return nil
-            }
+            guard dayEphoche >= date else { return nil }
             return $0.element
         } ?? [HourWeather]()
-        return data.dropLast(dropOffset)
+        return data
     }
 }
 

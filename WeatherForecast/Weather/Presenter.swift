@@ -45,6 +45,20 @@ final class Presenter {
         }
         return HoursForecastViewModel(forecast: models)
     }
+
+    private func prepareDailyForecastModel(_ data: PresenterWeatherModel) -> DailyForecastViewModel {
+        let models: [DayViewModel] = data.daysForecast.enumerated().map {
+            let isCurrentDay = $0.offset == 0
+            return DayViewModel(
+                isCurrentDay: isCurrentDay,
+                day: isCurrentDay ? "Сегодня" : $0.element.date.formatToLocalizedDay() ?? Constants.defaultStringValue,
+                imageURL: URL(string: "https:" + $0.element.day.condition.icon),
+                minTemp: $0.element.day.mintempC.formatToMesurment(.celsius),
+                maxTemp: $0.element.day.maxtempC.formatToMesurment(.celsius)
+            )
+        }
+        return DailyForecastViewModel(forecast: models)
+    }
 }
 
 extension Presenter: PresenterProtocol {
@@ -56,7 +70,12 @@ extension Presenter: PresenterProtocol {
 
         let current = prepareCurrentPositionModel(data)
         let hours = prepareHoursForecastModel(data)
-        let model = ForecastViewModel(currentPositionModel: current, hoursForecastModel: hours)
+        let daily = prepareDailyForecastModel(data)
+        let model = ForecastViewModel(
+            currentPositionModel: current,
+            hoursForecastModel: hours,
+            dailyForecastModel: daily
+        )
 
         await viewController?.displayData(viewModel: model)
     }

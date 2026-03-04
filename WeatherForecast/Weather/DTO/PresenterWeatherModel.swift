@@ -10,4 +10,5 @@ struct PresenterWeatherModel {
     let currentDayWeather: ForecastDay?
     let currentWeather: CurrentWeather
     let hoursForecast: [HourWeather]
+    let daysForecast: [ForecastDay]
 }

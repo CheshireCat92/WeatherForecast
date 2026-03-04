@@ -44,6 +44,8 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
         forecastImage.image = nil
         temperatureLabel.text = nil
         timeLable.text = nil
+        temperatureLabel.textColor = .black
+        timeLable.textColor = .black
         backgroundColor = .white
     }
 

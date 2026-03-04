@@ -8,4 +8,5 @@
 struct ForecastViewModel {
     let currentPositionModel: CurrentPositionViewModel
     let hoursForecastModel: HoursForecastViewModel
+    let dailyForecastModel: DailyForecastViewModel
 }

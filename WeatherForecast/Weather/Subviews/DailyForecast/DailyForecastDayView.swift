@@ -6,36 +6,42 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class DailyForecastDayView: UIView {
 
     private enum Constants: DSSizes {
         static let dividerHeight: CGFloat = 1
         static let forecastImageWidth: CGFloat = 50
-        static let dayLabelWidth: CGFloat = 100
+        static let dayLabelWidth: CGFloat = 70
     }
 
     private lazy var dayLabel = {
         let label = UILabel()
-        label.text = "Сегодня"
+        label.numberOfLines = 1
+        label.font = .dsFont(.bodyPrimary)
         return label
     }()
 
     private lazy var forecastImage = {
-        let view = UIImageView(image: UIImage(systemName: "cloud.sun"))
+        let view = UIImageView()
         view.contentMode = .scaleAspectFit
         return view
     }()
 
     private lazy var minTemperatureLabel = {
         let label = UILabel()
-        label.text = "Мин.: -4"
+        label.numberOfLines = 1
+        label.font = .dsFont(.bodyPrimary)
+        label.textColor = .init(token: \.semantic.temp.min)
         return label
     }()
 
     private lazy var maxTemperatureLabel = {
         let label = UILabel()
-        label.text = "Макс.: 12"
+        label.numberOfLines = 1
+        label.font = .dsFont(.bodyPrimary)
+        label.textColor = .init(token: \.semantic.temp.max)
         return label
     }()
 
@@ -49,7 +55,24 @@ final class DailyForecastDayView: UIView {
         super.init(frame: frame)
         setupUI()
     }
-    
+
+    convenience init(model: DayViewModel) {
+        self.init()
+        forecastImage.kf.setImage(with: model.imageURL)
+        maxTemperatureLabel.text = model.maxTemp
+        minTemperatureLabel.text = model.minTemp
+        dayLabel.text = model.day
+
+        if model.isCurrentDay {
+            backgroundColor = .init(token: \.core.primary.accent)
+            dayLabel.textColor = .init(token: \.semantic.state.activeText)
+            maxTemperatureLabel.textColor = .init(token: \.semantic.state.activeText)
+            minTemperatureLabel.textColor = .init(token: \.semantic.state.activeText)
+        }
+
+        layoutSubviews()
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -81,11 +104,12 @@ final class DailyForecastDayView: UIView {
             forecastImage.widthAnchor.constraint(equalToConstant: Constants.forecastImageWidth),
             forecastImage.bottomAnchor.constraint(equalTo: dayLabel.bottomAnchor),
 
-            minTemperatureLabel.leadingAnchor.constraint(equalTo: forecastImage.trailingAnchor, constant: Constants.space(.lg)),
+            minTemperatureLabel.leadingAnchor.constraint(greaterThanOrEqualTo: forecastImage.trailingAnchor, constant: Constants.space(.lg)),
             minTemperatureLabel.topAnchor.constraint(equalTo: dayLabel.topAnchor),
             minTemperatureLabel.bottomAnchor.constraint(equalTo: dayLabel.bottomAnchor),
 
             maxTemperatureLabel.leadingAnchor.constraint(equalTo: minTemperatureLabel.trailingAnchor, constant: Constants.space(.lg)),
+            maxTemperatureLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -Constants.space(.lg)),
             maxTemperatureLabel.topAnchor.constraint(equalTo: dayLabel.topAnchor),
             maxTemperatureLabel.bottomAnchor.constraint(equalTo: dayLabel.bottomAnchor)
         ])

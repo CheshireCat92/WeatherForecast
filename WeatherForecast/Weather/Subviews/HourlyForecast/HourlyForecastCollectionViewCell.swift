@@ -14,13 +14,11 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
 
     private lazy var timeLable: UILabel = {
         let label = UILabel()
-//        label.text = "Сейчас"
         return label
     }()
 
     private lazy var temperatureLabel: UILabel = {
         let label = UILabel()
-//        label.text = "21"
         return label
     }()
 

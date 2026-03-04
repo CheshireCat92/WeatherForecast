@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+<key>CITY</key>
+<string>Город</string>
+<key>CURRENT_LOCATION</key>
+<string>Текущее место</string>
+<key>DEFAULT_VALUE</key>
+<string>-</string>
+<key>ERROR_TEXT</key>
+<string>Что-то не так. Нажмите для обновления</string>
+<key>FEELS_LIKE_DEGREES</key>
+<string>Ощущается как %@</string>
+<key>LOADING</key>
+<string>Осматриваемся...</string>
+<key>MAXTEMPMIN</key>
+<string>Макс.: %@, мин.: %@</string>
+<key>TODAY</key>
+<string>Сегодня</string>
+<key>NOW</key>
+<string>Сейчас</string>
+<key>TOMORROW</key>
+<string>Завтра</string>
+<key>UPDATED</key>
+<string>Обновлено. Нажмите для обновления</string>
+<key>UPDATED_AT</key>
+<string>Обновлено в %@. Нажмите для обновления</string>
+</dict>
+</plist>

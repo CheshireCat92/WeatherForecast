@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CITY</key>
+	<string>City</string>
+	<key>CURRENT_LOCATION</key>
+	<string>Current location</string>
+	<key>DEFAULT_VALUE</key>
+	<string>-</string>
+	<key>ERROR_TEXT</key>
+	<string>Something went wrong. Please refresh</string>
+	<key>FEELS_LIKE</key>
+	<string>Feels like %@</string>
+	<key>LOADING</key>
+	<string>Looking around...</string>
+	<key>MAX_MIN</key>
+	<string>Max.: %@, min.: %@</string>
+	<key>NOW</key>
+	<string>Now</string>
+	<key>TODAY</key>
+	<string>Today</string>
+	<key>TOMORROW</key>
+	<string>Tomorrow</string>
+	<key>UPDATED</key>
+	<string>Updated. Click to refresh</string>
+	<key>UPDATED_AT</key>
+	<string>Updated at %@. Click to refresh</string>
+</dict>
+</plist>

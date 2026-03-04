@@ -9,14 +9,12 @@ struct CurrentPositionViewModel {
     let city: String
     let feelsLike: String
     let current: String
-    let minTemp: String
-    let maxTemp: String
+    let maxMinTemp: String
 
-    init(city: String, feelsLike: String, current: String, minTemp: String, maxTemp: String) {
+    init(city: String, feelsLike: String, current: String, maxMinTemp: String) {
         self.city = city
         self.feelsLike = feelsLike
         self.current = current
-        self.minTemp = minTemp
-        self.maxTemp = maxTemp
+        self.maxMinTemp = maxMinTemp
     }
 }

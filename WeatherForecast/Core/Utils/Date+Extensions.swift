@@ -20,4 +20,12 @@ extension Date {
         return calendar.date(from: components)
     }
 
+    func toString(_ format: DateFormats = .yyyyMMddHHmm) -> String? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = format.rawValue
+        formatter.locale = .autoupdatingCurrent
+        formatter.timeZone = .autoupdatingCurrent
+        return formatter.string(from: Date.now)
+    }
+
 }

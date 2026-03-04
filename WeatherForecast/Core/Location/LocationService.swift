@@ -37,6 +37,9 @@ final class LocationService: NSObject {
     func fetchCurrentLocation() {
         locationManager.stopUpdatingLocation()
         locationManager.startUpdatingLocation()
+    }
+
+    func stopUpdating() {
         locationManager.stopUpdatingLocation()
     }
 }

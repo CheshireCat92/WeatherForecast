@@ -8,25 +8,26 @@
 import Foundation
 
 extension String {
-    func formatDateString() -> String? {
+    func formatDateString(_ format: DateFormats = .yyyyMMddHHmm) -> String? {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        formatter.dateFormat = format.rawValue
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.timeZone = TimeZone(secondsFromGMT: .zero)
         guard let date = formatter.date(from: self) else { return nil }
-        formatter.dateFormat = "HH:mm"
+        formatter.dateFormat = DateFormats.HHmm.rawValue
         let string = formatter.string(from: date)
         return string
     }
 
-    func formatToLocalizedDay() -> String? {
+    func formatToLocalizedDay(_ format: DateFormats = .yyyyMMdd) -> String? {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.dateFormat = format.rawValue
         formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.timeZone = TimeZone(secondsFromGMT: .zero)
         guard let date = formatter.date(from: self) else { return nil }
-        formatter.dateFormat = "EEE"
-        formatter.locale = Locale.autoupdatingCurrent
+        formatter.dateFormat = DateFormats.EEE.rawValue
+        formatter.locale = Locale.prefferedLocale()
+        formatter.timeZone = .autoupdatingCurrent
         let string = formatter.string(from: date)
         return string
     }

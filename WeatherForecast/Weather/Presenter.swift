@@ -8,6 +8,7 @@
 import Foundation
 
 protocol PresenterProtocol: AnyObject {
+    func updateInfoState(_ state: PresenterInfoState) async
     func didFailWithError(error: String) async
     func didFetchData(data: PresenterWeatherModel) async
 }
@@ -63,7 +64,8 @@ final class Presenter {
 
 extension Presenter: PresenterProtocol {
     func didFailWithError(error: String) async {
-        await viewController?.showError(message: error)
+//        await viewController?.displayInfoData(viewModel: .init(state: .error, text: "Что-то не так. Нажми, чтобы обновить"))
+        await updateInfoState(.error)
     }
 
     func didFetchData(data: PresenterWeatherModel) async {
@@ -77,6 +79,27 @@ extension Presenter: PresenterProtocol {
             dailyForecastModel: daily
         )
 
+        await updateInfoState(.normal)
         await viewController?.displayData(viewModel: model)
+    }
+
+    func updateInfoState(_ state: PresenterInfoState) async {
+        var model: InfoViewModel
+        switch state {
+        case .initial:
+            model = .init(state: .initial, text: Constants.defaultStringValue)
+        case .loading:
+            model = .init(state: .loading, text: "Осматриваемся...")
+        case .error:
+            model = .init(state: .error, text: "Что-то не так. Нажмите для обновления")
+        case .normal:
+            var text = "Обновлено."
+            if let time = Date.now.toString(.HHmm) {
+                text = "Обновлено в \(time)."
+            }
+            model = .init(state: .normal, text: text + " Нажмите для обновления")
+        }
+
+        await viewController?.displayInfoData(viewModel: model)
     }
 }

@@ -10,13 +10,19 @@ import UIKit
 protocol ViewControllerProtocol: AnyObject {
     func showError(message: String) async
     func displayData(viewModel: ForecastViewModel) async
+    func displayInfoData(viewModel: InfoViewModel) async
 }
 
 final class ViewController: UIViewController {
 
+    private enum Constants {
+        static let infoViewHeight: CGFloat = 30
+    }
+
     private var interactor: InteractorProtocol
 
     private lazy var contentView = ForecastContentView()
+    private lazy var infoView = InfoView()
 
 
     init(interactor: InteractorProtocol) {
@@ -34,11 +40,21 @@ final class ViewController: UIViewController {
         setupUI()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        fetchData()
+    }
+
     private func setupUI() {
-        view.add(subview: contentView)
+        view.add(subviews:[contentView, infoView])
         view.backgroundColor = .init(token: \.core.primary.background)
 
         NSLayoutConstraint.activate([
+            infoView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            infoView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            infoView.topAnchor.constraint(equalTo: view.topAnchor),
+            infoView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: Constants.infoViewHeight),
+
             contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             contentView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -47,22 +63,22 @@ final class ViewController: UIViewController {
 
     }
 
-
-    // MARK: - Event handling
     private func fetchData() {
         Task {
             await interactor.fetchLocation()
         }
     }
-    
-    // For testing with current location
-    private func fetchCurrentLocationWeather() {
-        // Get current location using CLLocationManager
-        // Then call fetchData with the coordinates
-    }
 }
 
 extension ViewController: ViewControllerProtocol {
+
+    @MainActor
+    func displayInfoData(viewModel: InfoViewModel) {
+        infoView.configureWith(viewModel) { [weak self] in
+            guard let self else { return }
+            self.fetchData()
+        }
+    }
 
     @MainActor
     func displayData(viewModel: ForecastViewModel) {

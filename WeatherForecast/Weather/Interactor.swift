@@ -39,17 +39,23 @@ final class Interactor: InteractorProtocol {
 
     private func setup() {
         locationService.delegate = self
-        locationService.start()
+        Task {
+            await presenter?.updateInfoState(.initial)
+        }
     }
 
     // MARK: - Business logic
     func fetchLocation() {
+        Task {
+            await presenter?.updateInfoState(.loading)
+        }
+        locationService.start()
         locationService.fetchCurrentLocation()
     }
 
     private func fetchData(lat: String, lon: String, days: Int = Constants.defaultDaysCount) async {
         let response = await networkService.fetchForecastDataFor(lat: lat, lon: lon, days: days)
-
+        locationService.stopUpdating()
         switch response {
         case .success(let data):
             await presenter?.didFetchData(data: processResponse(data))
@@ -87,19 +93,17 @@ final class Interactor: InteractorProtocol {
 extension Interactor: LocationServiceDelegate {
 
     func locationDidError(_ error: LocationServiceErrors) {
-
         Task { [weak self] in
             guard let self else { return }
             let lastLocation = self.lastKnownLocation ?? Constants.defaultLocation
             await self.fetchData(
                 lat: "\(lastLocation.lat)",
-                lon: "\(lastLocation.lon)"
+                lon: "\(lastLocation.lon)",
             )
         }
     }
     
     func locationDidUpdate(location: LocationDataModel) {
-        guard lastKnownLocation != location else { return }
         lastKnownLocation = location
         Task { [weak self, location] in
             await self?.fetchData(

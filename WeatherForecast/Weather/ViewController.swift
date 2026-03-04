@@ -36,6 +36,7 @@ final class ViewController: UIViewController {
 
     private func setupUI() {
         view.add(subview: contentView)
+        view.backgroundColor = .init(token: \.core.primary.background)
 
         NSLayoutConstraint.activate([
             contentView.leadingAnchor.constraint(equalTo: view.leadingAnchor),

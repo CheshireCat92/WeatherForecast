@@ -10,7 +10,7 @@ import Foundation
 
 final class DailyForecastView: UIView {
 
-    private enum Constants {
+    private enum Constants: DSSizes {
         static let interitemSpacing: CGFloat = 10
         static let itemHeight: CGFloat = 50
     }
@@ -26,24 +26,29 @@ final class DailyForecastView: UIView {
     }
 
     private func setupUI() {
+        backgroundColor = .init(token: \.core.primary.surface)
+        layer.cornerRadius = Constants.radius(.lg)
+        layer.cornerCurve = .circular
+        clipsToBounds = true
+
         let views = [
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell(),
-            DailyForecastCollectionViewCell()
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView(),
+            DailyForecastDayView()
         ]
         self.add(subviews: views)
 

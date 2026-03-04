@@ -8,43 +8,53 @@
 import UIKit
 
 final class CurrentPositionView: UIView {
+
+    enum Constants: DSSizes {
+        static let numberOfLines = 1
+    }
+
     private lazy var currentPlaceLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.numberOfLines = 1
+        label.numberOfLines = Constants.numberOfLines
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 10, weight: .thin)
+        label.font = .dsFont(.bodySmall)
+        label.textColor = UIColor(token: \.core.secondary.text)
         label.text = "Текущее место"
         return label
     }()
     private lazy var nameLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.numberOfLines = 1
+        label.numberOfLines = Constants.numberOfLines
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.font = .dsFont(.titleCity)
+        label.textColor = UIColor(token: \.core.primary.text)
         label.text = "Город"
         return label
     }()
     private lazy var currentTemperatureLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.numberOfLines = 1
+        label.numberOfLines = Constants.numberOfLines
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 20, weight: .bold)
+        label.font = .dsFont(.displayTemp)
+        label.textColor = UIColor(token: \.core.primary.text)
         label.text = "20"
         return label
     }()
     private lazy var feelslikeLable: UILabel = {
         let label = UILabel(frame: .zero)
-        label.numberOfLines = 1
+        label.numberOfLines = Constants.numberOfLines
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 12, weight: .thin)
+        label.font = .dsFont(.bodySmall)
+        label.textColor = UIColor(token: \.core.secondary.text)
         label.text = "Ощущается как -6"
         return label
     }()
     private lazy var maxMinLabel: UILabel = {
         let label = UILabel(frame: .zero)
-        label.numberOfLines = 1
+        label.numberOfLines = Constants.numberOfLines
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 16, weight: .regular)
+        label.font = .dsFont(.bodyPrimary)
+        label.textColor = UIColor(token: \.core.primary.text)
         label.text = "Макс.: 3, мин.: -4"
         return label
     }()
@@ -52,6 +62,7 @@ final class CurrentPositionView: UIView {
         let stack = UIStackView()
         stack.alignment = .center
         stack.distribution = .equalSpacing
+        stack.spacing = Constants.space(.xs)
         stack.axis = .vertical
         return stack
     }()

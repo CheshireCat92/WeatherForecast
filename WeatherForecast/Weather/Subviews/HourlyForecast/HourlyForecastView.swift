@@ -10,20 +10,20 @@ import Foundation
 
 final class HourlyForecastView: UIView {
 
-    private enum Constants {
-        static let interitemSpacing: CGFloat = 10
-        static let estimatedItemSize = CGSize(width: 80, height: 100)
+    private enum Constants: DSSizes {
+        static let itemSize = CGSize(width: 72, height: 94)
     }
 
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumInteritemSpacing = Constants.interitemSpacing
-        layout.estimatedItemSize = Constants.estimatedItemSize
+        layout.minimumInteritemSpacing = Constants.space(.sm)
+        layout.itemSize = Constants.itemSize
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.showsHorizontalScrollIndicator = false
+        collectionView.backgroundColor = .init(token: \.core.secondary.background)
         collectionView.registerCell(HourlyForecastCollectionViewCell.self)
         return collectionView
     }()
@@ -39,11 +39,13 @@ final class HourlyForecastView: UIView {
 
     private func setupUI() {
         self.add(subview: collectionView)
+        backgroundColor = .init(token: \.core.secondary.background)
+        layer.cornerRadius = Constants.radius(.xl)
         NSLayoutConstraint.activate([
-            collectionView.topAnchor.constraint(equalTo: self.topAnchor),
-            collectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
-            collectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor),
-            collectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor)
+            collectionView.topAnchor.constraint(equalTo: self.topAnchor, constant: Constants.space(.md)),
+            collectionView.bottomAnchor.constraint(equalTo: self.bottomAnchor,  constant: -Constants.space(.md)),
+            collectionView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: Constants.space(.md)),
+            collectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -Constants.space(.md))
         ])
     }
 }
@@ -57,7 +59,6 @@ extension HourlyForecastView: UICollectionViewDelegate, UICollectionViewDataSour
         guard let cell: HourlyForecastCollectionViewCell = collectionView.dequeCell(indexPath: indexPath) else {
             return UICollectionViewCell(frame: .zero)
         }
-        cell.backgroundColor = .red
         return cell
     }
 

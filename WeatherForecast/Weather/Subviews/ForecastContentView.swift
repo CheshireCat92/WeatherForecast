@@ -9,13 +9,12 @@ import UIKit
 
 final class ForecastContentView: UIView {
 
-    private enum Constants {
+    private enum Constants: DSSizes {
         static let scrollViewTopInset: CGFloat = 50
-        static let currentPositionViewTopOffset: CGFloat = 50
         static let scrollGap: CGFloat = 20
         static let minScaleFactor = 0.8
         static let hourlyForecastViewHeight: CGFloat = 120
-        static let currentPositionViewHeight: CGFloat = 95
+        static let currentPositionViewHeight: CGFloat = 195
     }
 
     private lazy var currentPositionView = CurrentPositionView()
@@ -47,6 +46,7 @@ final class ForecastContentView: UIView {
     }
 
     private func setupUI() {
+        backgroundColor = .init(token: \.core.primary.background)
         self.add(subviews:[
             currentPositionView,
             scrollView
@@ -63,12 +63,15 @@ final class ForecastContentView: UIView {
 
         currentPositionViewTopConstraint = currentPositionView.topAnchor.constraint(
             equalTo: topAnchor,
-            constant: Constants.currentPositionViewTopOffset
+            constant: Constants.space(.xl)
         )
 
         hourlyForecastViewTopConstraint = hourlyForecastView.topAnchor.constraint(equalTo: contentView.topAnchor)
 
-        dailyForecastViewTopConstraint = dailyForecastView.topAnchor.constraint(equalTo: hourlyForecastView.bottomAnchor)
+        dailyForecastViewTopConstraint = dailyForecastView.topAnchor.constraint(
+            equalTo: hourlyForecastView.bottomAnchor,
+            constant: Constants.space(.md)
+        )
 
         NSLayoutConstraint.activate([
             currentPositionView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -87,15 +90,13 @@ final class ForecastContentView: UIView {
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
 
-
-            hourlyForecastView.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor),
-            hourlyForecastView.trailingAnchor.constraint(greaterThanOrEqualTo: contentView.trailingAnchor),
+            hourlyForecastView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             hourlyForecastViewTopConstraint,
             hourlyForecastView.heightAnchor.constraint(equalToConstant: Constants.hourlyForecastViewHeight),
-            hourlyForecastView.widthAnchor.constraint(equalTo: contentView.widthAnchor),
+            hourlyForecastView.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -Constants.space(.xl)),
 
-            dailyForecastView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            dailyForecastView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            dailyForecastView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.space(.md)),
+            dailyForecastView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -Constants.space(.md)),
             dailyForecastViewTopConstraint,
             dailyForecastView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
@@ -104,7 +105,7 @@ final class ForecastContentView: UIView {
 
 extension ForecastContentView: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
+
         animateTopConstraint(scrollView.contentOffset.y)
         animateHourlyBlock(scrollView.contentOffset.y)
     }
@@ -121,13 +122,12 @@ extension ForecastContentView: UIScrollViewDelegate {
 
         let duration = abs(expectedYOffset - scrollView.contentOffset.y.rounded()) / normalVelocity  / 1000
         scrollView.setContentOffset(scrollView.contentOffset, animated: false)
-
         UIView.animate(withDuration: duration, delay: .zero, options: [.layoutSubviews]) {
             scrollView.setContentOffset(expectedPoint, animated: false)
-            self.currentPositionViewTopConstraint.constant = Constants.currentPositionViewTopOffset
+            self.currentPositionViewTopConstraint.constant = Constants.space(.xl)
             self.hourlyForecastView.transform = CGAffineTransform.identity
             self.hourlyForecastViewTopConstraint.constant = .zero
-            self.dailyForecastViewTopConstraint.constant = .zero
+            self.dailyForecastViewTopConstraint.constant = Constants.space(.md)
             self.hourlyForecastView.alpha = 1
             self.layoutIfNeeded()
         }

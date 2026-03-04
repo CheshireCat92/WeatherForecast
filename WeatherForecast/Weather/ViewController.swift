@@ -8,8 +8,8 @@
 import UIKit
 
 protocol ViewControllerProtocol: AnyObject {
-    func showError(message: String)
-    func displayData(viewModel: String)
+    func showError(message: String) async
+    func displayData(viewModel: ForecastViewModel) async
 }
 
 final class ViewController: UIViewController {
@@ -63,12 +63,14 @@ final class ViewController: UIViewController {
 }
 
 extension ViewController: ViewControllerProtocol {
-    func showError(message: String) {
-        print("Error: \(message)")
+
+    @MainActor
+    func displayData(viewModel: ForecastViewModel) {
+        contentView.configureWith(viewModel)
     }
 
-    func displayData(viewModel: String) {
-        // Update the UI with the view model data
-        print("Displaying weather data: \(viewModel)")
+    @MainActor
+    func showError(message: String) {
+        print("Error: \(message)")
     }
 }

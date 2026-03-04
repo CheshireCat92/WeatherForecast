@@ -159,6 +159,9 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherForecast/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Всегда";
+				INFOPLIST_KEY_NSLocationUsageDescription = "Впринципе";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Периодически";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
@@ -188,6 +191,9 @@
 				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WeatherForecast/Info.plist;
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "Всегда";
+				INFOPLIST_KEY_NSLocationUsageDescription = "Впринципе";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Периодически";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;

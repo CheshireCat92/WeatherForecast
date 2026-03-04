@@ -13,7 +13,7 @@ final class ForecastContentView: UIView {
         static let scrollViewTopInset: CGFloat = 50
         static let scrollGap: CGFloat = 20
         static let minScaleFactor = 0.8
-        static let hourlyForecastViewHeight: CGFloat = 120
+        static let hourlyForecastViewHeight: CGFloat = 150
         static let currentPositionViewHeight: CGFloat = 195
     }
 
@@ -101,11 +101,16 @@ final class ForecastContentView: UIView {
             dailyForecastView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
     }
+
+    func configureWith(_ model: ForecastViewModel) {
+        currentPositionView.configureWith(model.currentPositionModel)
+        hourlyForecastView.configureWith(model.hoursForecastModel)
+    }
 }
 
 extension ForecastContentView: UIScrollViewDelegate {
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
 
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
         animateTopConstraint(scrollView.contentOffset.y)
         animateHourlyBlock(scrollView.contentOffset.y)
     }
@@ -132,8 +137,6 @@ extension ForecastContentView: UIScrollViewDelegate {
             self.layoutIfNeeded()
         }
     }
-
-
 
     private func animateTopConstraint(_ offset: Double) {
         guard offset < .zero else { return }

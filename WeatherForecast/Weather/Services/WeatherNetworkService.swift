@@ -42,14 +42,14 @@ enum WeatherNetworkServiceError: Error {
 }
 
 protocol WeatherNetworkServiceProtocol {
-    func fetchForecastDataFor(lat: String, lon: String) async -> Result<WeatherForecastResponse, WeatherNetworkServiceError>
+    func fetchForecastDataFor(lat: String, lon: String, days: Int) async -> Result<WeatherForecastResponse, WeatherNetworkServiceError>
 }
 
 final class WeatherNetworkService: BaseNetworkService, WeatherNetworkServiceProtocol {
 
-    func fetchForecastDataFor(lat: String, lon: String) async -> Result<WeatherForecastResponse, WeatherNetworkServiceError> {
+    func fetchForecastDataFor(lat: String, lon: String, days: Int) async -> Result<WeatherForecastResponse, WeatherNetworkServiceError> {
 
-        let result: Result<WeatherForecastResponse, NetworkError> = await runRequest(request: Requests.forecast(lat: lat, lon: lon, days: nil))
+        let result: Result<WeatherForecastResponse, NetworkError> = await runRequest(request: Requests.forecast(lat: lat, lon: lon, days: days))
 
         switch result {
         case .success(let data):

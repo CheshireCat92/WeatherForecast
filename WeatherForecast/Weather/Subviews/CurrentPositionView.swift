@@ -94,7 +94,10 @@ final class CurrentPositionView: UIView {
         ])
     }
 
-    func configure() {
-        
+    func configureWith(_ model: CurrentPositionViewModel) {
+        nameLabel.text = model.city
+        currentTemperatureLabel.text = model.current
+        feelslikeLable.text = "Ощущается как \(model.feelsLike)"
+        maxMinLabel.text = "Макс.: \(model.maxTemp), мин.: \(model.minTemp)"
     }
 }

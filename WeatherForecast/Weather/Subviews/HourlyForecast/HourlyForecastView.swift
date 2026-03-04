@@ -11,7 +11,7 @@ import Foundation
 final class HourlyForecastView: UIView {
 
     private enum Constants: DSSizes {
-        static let itemSize = CGSize(width: 72, height: 94)
+        static let itemSize = CGSize(width: 80, height: 110)
     }
 
     private lazy var collectionView: UICollectionView = {
@@ -27,6 +27,8 @@ final class HourlyForecastView: UIView {
         collectionView.registerCell(HourlyForecastCollectionViewCell.self)
         return collectionView
     }()
+
+    private var model =  HoursForecastViewModel(forecast: [HourViewModel]())
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -48,17 +50,23 @@ final class HourlyForecastView: UIView {
             collectionView.trailingAnchor.constraint(equalTo: self.trailingAnchor, constant: -Constants.space(.md))
         ])
     }
+
+    func configureWith(_ model: HoursForecastViewModel) {
+        self.model = model
+        collectionView.reloadData()
+    }
 }
 
 extension HourlyForecastView: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        100
+        model.forecast.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell: HourlyForecastCollectionViewCell = collectionView.dequeCell(indexPath: indexPath) else {
             return UICollectionViewCell(frame: .zero)
         }
+        cell.configureWith(model.forecast[indexPath.row])
         return cell
     }
 

@@ -14,18 +14,20 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
 
     private lazy var timeLable: UILabel = {
         let label = UILabel()
-        label.text = "Сейчас"
+//        label.text = "Сейчас"
         return label
     }()
 
     private lazy var temperatureLabel: UILabel = {
         let label = UILabel()
-        label.text = "21"
+//        label.text = "21"
         return label
     }()
 
     private lazy var forecastImage: UIImageView = {
-        UIImageView(image: UIImage(systemName: "cloud.sun"))
+        let view = UIImageView()
+        view.contentMode = .scaleAspectFit
+        return view
     }()
 
     override init(frame: CGRect) {
@@ -37,14 +39,12 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    deinit {
-        forecastImage.image = nil
-    }
-
     override func prepareForReuse() {
+        super.prepareForReuse()
         forecastImage.image = nil
         temperatureLabel.text = nil
         timeLable.text = nil
+        backgroundColor = .white
     }
 
     private func setupUI() {
@@ -54,7 +54,7 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
 
         let stack = UIStackView()
         stack.alignment = .center
-        stack.distribution = .equalSpacing
+        stack.distribution = .fillProportionally
         stack.axis = .vertical
         stack.spacing = Constants.space(.sm)
 
@@ -75,8 +75,19 @@ final class HourlyForecastCollectionViewCell: UICollectionViewCell {
 
     }
 
-    func configure() {
-
+    func configureWith(_ model: HourViewModel) {
+        timeLable.text = model.time
+        temperatureLabel.text = model.temperature
+        forecastImage.kf.setImage(with: model.imageURL)
+        if model.isNow || model.isNextDayStart {
+            temperatureLabel.textColor = .init(token: \.semantic.state.activeText)
+            timeLable.textColor = .init(token: \.semantic.state.activeText)
+            backgroundColor = .init(token: \.core.primary.accent)
+        } else {
+            temperatureLabel.textColor = .black
+            timeLable.textColor = .black
+            backgroundColor = .init(token: \.core.primary.surface)
+        }
     }
 
 }

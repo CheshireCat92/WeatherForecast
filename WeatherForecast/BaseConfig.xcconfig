@@ -8,6 +8,6 @@
 // Configuration settings file format documentation can be found at:
 // https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
 
-BASE_URL = https:/$()/api.weatherapi.com/v1/current.json
+BASE_URL = https:/$()/api.weatherapi.com/v1/forecast.json
 API_KEY = fa8b3df74d4042b9aa7135114252304
 API_KEY_PARAM_NAME = key

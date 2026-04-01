@@ -56,7 +56,7 @@ final class NetworkRequestBuilder: NetworkRequestBuilderProtocol {
             let baseUrlString = NetworkConstants.baseUrl,
             let key = NetworkConstants.apiKey,
             let paramName = NetworkConstants.apiKeyParamName,
-            var url = URL(string: baseUrlString)
+            let url = URL(string: baseUrlString)
         else { throw NetworkError.buildBaseRequestError }
         let query = URLQueryItem(name: paramName, value: key)
         return url.appending(queryItems: [query])

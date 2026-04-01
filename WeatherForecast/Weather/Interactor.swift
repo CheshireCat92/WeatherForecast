@@ -37,29 +37,47 @@ final class Interactor: InteractorProtocol {
     }
 
     private func setup() {
-        locationService.delegate = self
-        Task {
-            await presenter?.updateInfoState(.initial)
-        }
+        presenter?.updateInfoState(.initial)
     }
 
     // MARK: - Business logic
     func fetchLocation() {
+        presenter?.updateInfoState(.loading)
         Task {
-            await presenter?.updateInfoState(.loading)
+            do {
+                let data = try await locationService.fetchCurrentLocation()
+                await locationDidUpdate(location: data)
+            } catch {
+                await locationDidError(error as! LocationServiceErrors)
+            }
         }
-        locationService.start()
-        locationService.fetchCurrentLocation()
+    }
+
+    private func locationDidError(_ error: LocationServiceErrors) async {
+        let lastLocation = self.lastKnownLocation ?? Constants.defaultLocation
+        await fetchData(
+            lat: "\(lastLocation.lat)",
+            lon: "\(lastLocation.lon)",
+        )
+    }
+
+    private func locationDidUpdate(location: LocationDataModel) async {
+        lastKnownLocation = location
+        await fetchData(
+            lat: "\(location.lat)",
+            lon: "\(location.lon)"
+        )
     }
 
     private func fetchData(lat: String, lon: String, days: Int = Constants.defaultDaysCount) async {
         let response = await networkService.fetchForecastDataFor(lat: lat, lon: lon, days: days)
-        locationService.stopUpdating()
-        switch response {
-        case .success(let data):
-            await presenter?.didFetchData(data: processResponse(data))
-        case .failure(let error):
-            await presenter?.didFailWithError(error: error.localizedDescription)
+        await MainActor.run {
+            switch response {
+            case .success(let data):
+                presenter?.didFetchData(data: processResponse(data))
+            case .failure(let error):
+                presenter?.didFailWithError(error: error.localizedDescription)
+            }
         }
     }
 
@@ -86,29 +104,5 @@ final class Interactor: InteractorProtocol {
             return $0.element
         } ?? [HourWeather]()
         return data
-    }
-}
-
-extension Interactor: LocationServiceDelegate {
-
-    func locationDidError(_ error: LocationServiceErrors) {
-        Task { [weak self] in
-            guard let self else { return }
-            let lastLocation = self.lastKnownLocation ?? Constants.defaultLocation
-            await self.fetchData(
-                lat: "\(lastLocation.lat)",
-                lon: "\(lastLocation.lon)",
-            )
-        }
-    }
-    
-    func locationDidUpdate(location: LocationDataModel) {
-        lastKnownLocation = location
-        Task { [weak self, location] in
-            await self?.fetchData(
-                lat: "\(location.lat)",
-                lon: "\(location.lon)"
-            )
-        }
     }
 }

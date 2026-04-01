@@ -8,8 +8,8 @@
 import UIKit
 
 protocol ViewControllerProtocol: AnyObject {
-    func displayData(viewModel: ForecastViewModel) async
-    func displayInfoData(viewModel: InfoViewModel) async
+    func displayData(viewModel: ForecastViewModel)
+    func displayInfoData(viewModel: InfoViewModel)
 }
 
 final class ViewController: UIViewController {
@@ -71,7 +71,6 @@ final class ViewController: UIViewController {
 
 extension ViewController: ViewControllerProtocol {
 
-    @MainActor
     func displayInfoData(viewModel: InfoViewModel) {
         infoView.configureWith(viewModel) { [weak self] in
             guard let self else { return }
@@ -79,7 +78,6 @@ extension ViewController: ViewControllerProtocol {
         }
     }
 
-    @MainActor
     func displayData(viewModel: ForecastViewModel) {
         contentView.configureWith(viewModel)
     }

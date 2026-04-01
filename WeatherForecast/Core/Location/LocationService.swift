@@ -8,14 +8,9 @@
 import Foundation
 import CoreLocation
 
-protocol LocationServiceDelegate: AnyObject {
-    func locationDidUpdate(location: LocationDataModel)
-    func locationDidError(_ error: LocationServiceErrors)
-}
-
 final class LocationService: NSObject {
     private let locationManager = CLLocationManager()
-    weak var delegate: LocationServiceDelegate?
+    private var continuation: CheckedContinuation<LocationDataModel, any Error>?
 
     override init() {
         super.init()
@@ -25,22 +20,24 @@ final class LocationService: NSObject {
     private func setup() {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
+        start()
     }
 
-    func start() {
+    private func start() {
         guard locationManager.isPermissionsGranted() else {
             locationManager.requestWhenInUseAuthorization()
             return
         }
     }
 
-    func fetchCurrentLocation() {
-        locationManager.stopUpdatingLocation()
-        locationManager.startUpdatingLocation()
-    }
-
-    func stopUpdating() {
-        locationManager.stopUpdatingLocation()
+    func fetchCurrentLocation() async throws-> LocationDataModel {
+        guard self.continuation == nil else {
+            throw LocationServiceErrors.someProblems
+        }
+        return try await withCheckedThrowingContinuation { [weak self] continuation in
+            self?.continuation = continuation
+            self?.locationManager.requestLocation()
+        }
     }
 }
 
@@ -50,25 +47,23 @@ extension LocationService: CLLocationManagerDelegate {
         guard let location = locations.last else {
             return
         }
-        delegate?.locationDidUpdate(location: LocationDataModel(location: location))
-    }
-
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        if manager.isPermissionsGranted() {
-            manager.startUpdatingLocation()
-        }
+        continuation?.resume(with: .success(LocationDataModel(location: location)))
+        continuation = nil
     }
 
     func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
+        defer {
+            continuation = nil
+        }
         guard let error = error as? CLError else {
-            delegate?.locationDidError(.someProblems)
+            continuation?.resume(with: .failure(LocationServiceErrors.someProblems))
             return
         }
         switch error.code {
         case .denied:
-            delegate?.locationDidError(.permissionsNotGranted)
+            continuation?.resume(with: .failure(LocationServiceErrors.permissionsNotGranted))
         default:
-            delegate?.locationDidError(.someProblems)
+            continuation?.resume(with: .failure(LocationServiceErrors.someProblems))
         }
     }
 }

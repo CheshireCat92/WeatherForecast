@@ -8,9 +8,9 @@
 import Foundation
 
 protocol PresenterProtocol: AnyObject {
-    func updateInfoState(_ state: PresenterInfoState) async
-    func didFailWithError(error: String) async
-    func didFetchData(data: PresenterWeatherModel) async
+    func updateInfoState(_ state: PresenterInfoState)
+    func didFailWithError(error: String)
+    func didFetchData(data: PresenterWeatherModel)
 }
 
 final class Presenter {
@@ -73,11 +73,11 @@ final class Presenter {
 }
 
 extension Presenter: PresenterProtocol {
-    func didFailWithError(error: String) async {
-        await updateInfoState(.error)
+    func didFailWithError(error: String) {
+        updateInfoState(.error)
     }
 
-    func didFetchData(data: PresenterWeatherModel) async {
+    func didFetchData(data: PresenterWeatherModel) {
 
         let current = prepareCurrentPositionModel(data)
         let hours = prepareHoursForecastModel(data)
@@ -88,11 +88,11 @@ extension Presenter: PresenterProtocol {
             dailyForecastModel: daily
         )
 
-        await updateInfoState(.normal)
-        await viewController?.displayData(viewModel: model)
+        updateInfoState(.normal)
+        viewController?.displayData(viewModel: model)
     }
 
-    func updateInfoState(_ state: PresenterInfoState) async {
+    func updateInfoState(_ state: PresenterInfoState) {
         var model: InfoViewModel
         switch state {
         case .initial:
@@ -109,6 +109,6 @@ extension Presenter: PresenterProtocol {
             model = .init(state: .normal, text: text)
         }
 
-        await viewController?.displayInfoData(viewModel: model)
+        viewController?.displayInfoData(viewModel: model)
     }
 }

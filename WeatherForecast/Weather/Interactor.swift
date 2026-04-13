@@ -86,7 +86,7 @@ final class Interactor: InteractorProtocol {
     private func processResponse(forecast: WeatherForecastResponse, current: WeatherForecastResponse) -> PresenterWeatherModel {
         PresenterWeatherModel(
             currentPlace: current.location,
-            currentDayWeather: current.forecast?.forecastday.first,
+            currentDayWeather: forecast.forecast?.forecastday.first,
             currentWeather: current.current,
             hoursForecast: processHourForecast(forecast),
             daysForecast: forecast.forecast?.forecastday ?? [ForecastDay]()

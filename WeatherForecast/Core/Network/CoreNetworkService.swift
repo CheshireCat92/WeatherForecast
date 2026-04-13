@@ -8,8 +8,8 @@
 import Foundation
 
 protocol CoreNetworkServiceProtocol {
-    func runRequest<T: Decodable>(item: NetworkRequestBuilderItem) async -> Result<T,NetworkError>
-    func runRequest<T: Decodable>(builder: NetworkRequestBuilderProtocol,item: NetworkRequestBuilderItem) async throws -> Result<T,NetworkError>
+    func runRequest<T: Decodable>(item: NetworkRequestBuilderItem) async throws(NetworkError)-> T
+    func runRequest<T: Decodable>(builder: NetworkRequestBuilderProtocol,item: NetworkRequestBuilderItem) async throws(NetworkError) -> T
 
 }
 
@@ -25,33 +25,34 @@ final class CoreNetworkService: CoreNetworkServiceProtocol {
         self.session = URLSession(configuration: configuration)
     }
 
-    func runRequest<T: Decodable>(item: NetworkRequestBuilderItem) async -> Result<T,NetworkError> {
-        await self.runRequest(builder: defaultBuilder, item: item)
+    func runRequest<T: Decodable>(item: NetworkRequestBuilderItem) async throws(NetworkError) -> T {
+        try await self.runRequest(builder: defaultBuilder, item: item)
     }
 
     func runRequest<T: Decodable>(
         builder: NetworkRequestBuilderProtocol,
         item: NetworkRequestBuilderItem
-    ) async -> Result<T,NetworkError> {
+    ) async throws(NetworkError) -> T {
         var networkData: (data: Data, response: URLResponse)
         do {
             let request = try builder.buildFrom(item)
             networkData = try await session.data(for: request)
         } catch {
-            if let networkError = error as? NetworkError {
-                return Result.failure(networkError)
+            guard let networkError = error as? NetworkError else {
+                throw .requestError(message: error.localizedDescription)
             }
-            return Result.failure(NetworkError.requestError(message: error.localizedDescription))
+            throw networkError
         }
 
         if let error = checkError(networkData.response) {
-            return Result.failure(error)
+            throw error
         }
 
-        guard let result = try? JSONDecoder().decode(T.self, from: networkData.data) else {
-            return Result.failure(NetworkError.decodeError)
+        do {
+            return try JSONDecoder().decode(T.self, from: networkData.data)
+        } catch {
+            throw .decodeError(message: error.localizedDescription)
         }
-        return Result.success(result)
     }
 
     private func checkError(_ response: URLResponse) -> NetworkError? {

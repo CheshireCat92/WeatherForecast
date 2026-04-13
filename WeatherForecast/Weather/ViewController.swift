@@ -30,7 +30,7 @@ final class ViewController: UIViewController {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        nil
     }
 
     override func viewDidLoad() {
@@ -63,9 +63,7 @@ final class ViewController: UIViewController {
     }
 
     private func fetchData() {
-        Task {
-            await interactor.fetchLocation()
-        }
+        interactor.fetchLocation()
     }
 }
 

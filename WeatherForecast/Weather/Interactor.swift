@@ -8,7 +8,7 @@
 import Foundation
 
 protocol InteractorProtocol: AnyObject {
-    func fetchLocation() async
+    func fetchLocation()
 }
 
 final class Interactor: InteractorProtocol {
@@ -37,13 +37,15 @@ final class Interactor: InteractorProtocol {
     }
 
     private func setup() {
-        presenter?.updateInfoState(.initial)
+        Task {
+            await presenter?.updateInfoState(.initial)
+        }
     }
 
     // MARK: - Business logic
     func fetchLocation() {
-        presenter?.updateInfoState(.loading)
         Task {
+            await presenter?.updateInfoState(.loading)
             do {
                 let data = try await locationService.fetchCurrentLocation()
                 await locationDidUpdate(location: data)
@@ -70,39 +72,37 @@ final class Interactor: InteractorProtocol {
     }
 
     private func fetchData(lat: String, lon: String, days: Int = Constants.defaultDaysCount) async {
-        let response = await networkService.fetchForecastDataFor(lat: lat, lon: lon, days: days)
-        await MainActor.run {
-            switch response {
-            case .success(let data):
-                presenter?.didFetchData(data: processResponse(data))
-            case .failure(let error):
-                presenter?.didFailWithError(error: error.localizedDescription)
-            }
+        async let forecastAsync = networkService.fetchForecastDataFor(lat: lat, lon: lon, days: days)
+        async let currentAsync = networkService.fetchCurrentDataFor(lat: lat, lon: lon)
+
+        do {
+            let data = try await processResponse(forecast: forecastAsync, current: currentAsync)
+            await presenter?.didFetchData(data: data)
+        } catch {
+            await presenter?.didFailWithError(error: error.localizedDescription)
         }
     }
 
-    private func processResponse(_ response: WeatherForecastResponse) -> PresenterWeatherModel {
-        let model = PresenterWeatherModel(
-            currentPlace: response.location,
-            currentDayWeather: response.forecast?.forecastday.first,
-            currentWeather: response.current,
-            hoursForecast: processHourForecast(response),
-            daysForecast: response.forecast?.forecastday ?? [ForecastDay]()
+    private func processResponse(forecast: WeatherForecastResponse, current: WeatherForecastResponse) -> PresenterWeatherModel {
+        PresenterWeatherModel(
+            currentPlace: current.location,
+            currentDayWeather: current.forecast?.forecastday.first,
+            currentWeather: current.current,
+            hoursForecast: processHourForecast(forecast),
+            daysForecast: forecast.forecast?.forecastday ?? [ForecastDay]()
         )
-        return model
     }
 
     private func processHourForecast(_ response: WeatherForecastResponse) -> [HourWeather] {
         guard let date = Date.now.timeStampWithComponents([.year,.month,.day,.hour]) else {
             return [HourWeather]()
         }
-        let data = response.forecast?.forecastday.prefix(Constants.defaultHourForecastDays).flatMap {
-            $0.hour
-        }.enumerated().compactMap{
-            let dayEphoche = TimeInterval($0.element.timeEpoch)
-            guard dayEphoche >= date else { return nil }
-            return $0.element
-        } ?? [HourWeather]()
-        return data
+        let data = response.forecast?.forecastday
+            .prefix(Constants.defaultHourForecastDays)
+            .flatMap(\.hour)
+            .filter{
+                TimeInterval($0.timeEpoch) >= date
+            }
+        return data ?? [HourWeather]()
     }
 }

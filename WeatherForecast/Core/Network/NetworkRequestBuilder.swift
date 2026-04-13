@@ -13,10 +13,10 @@ protocol NetworkRequestBuilderProtocol {
 
 final class NetworkRequestBuilder: NetworkRequestBuilderProtocol {
 
-    func buildFrom(_ item: NetworkRequestBuilderItem) throws-> URLRequest {
+    func buildFrom(_ item: NetworkRequestBuilderItem) throws -> URLRequest {
         var url: URL
         do {
-            url = try buildBaseUrlRequest()
+            url = try buildBaseUrlRequest(path: item.path())
         }catch {
             throw error
         }
@@ -51,13 +51,16 @@ final class NetworkRequestBuilder: NetworkRequestBuilderProtocol {
         return request
     }
 
-    private func buildBaseUrlRequest() throws -> URL {
+    private func buildBaseUrlRequest(path: String? = nil) throws -> URL {
         guard
             let baseUrlString = NetworkConstants.baseUrl,
             let key = NetworkConstants.apiKey,
             let paramName = NetworkConstants.apiKeyParamName,
-            let url = URL(string: baseUrlString)
+            var url = URL(string: baseUrlString)
         else { throw NetworkError.buildBaseRequestError }
+        if let path = path{
+            url = url.appending(path: path)
+        }
         let query = URLQueryItem(name: paramName, value: key)
         return url.appending(queryItems: [query])
     }

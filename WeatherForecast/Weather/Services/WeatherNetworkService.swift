@@ -9,8 +9,16 @@ import Foundation
 
 private enum Requests: NetworkRequestBuilderItem {
     case forecast(lat: String, lon: String, days: Int?)
+    case current(lat: String, lon: String)
 
-    func path() -> String? { nil }
+    func path() -> String? {
+        switch self {
+        case .forecast:
+            return "/v1/forecast.json"
+        case .current:
+            return "/v1/current.json"
+        }
+    }
 
     func headers() -> [String : String]? { nil }
 
@@ -20,12 +28,14 @@ private enum Requests: NetworkRequestBuilderItem {
 
     var method: BaseRequestType {
         switch self {
-        case .forecast: .GET
+        case .forecast, .current: .GET
         }
     }
 
     func params() -> [String: String]? {
         switch self {
+        case let .current(lat, lon):
+            return [ "q": "\(lat),\(lon)" ]
         case let .forecast(lat, lon, days):
             var params = [ "q": "\(lat),\(lon)" ]
             if let days = days {
@@ -42,24 +52,34 @@ enum WeatherNetworkServiceError: Error {
 }
 
 protocol WeatherNetworkServiceProtocol {
-    func fetchForecastDataFor(lat: String, lon: String, days: Int) async -> Result<WeatherForecastResponse, WeatherNetworkServiceError>
+    func fetchForecastDataFor(lat: String, lon: String, days: Int) async throws(WeatherNetworkServiceError) -> WeatherForecastResponse
+    func fetchCurrentDataFor(lat: String, lon: String) async throws(WeatherNetworkServiceError) -> WeatherForecastResponse
 }
 
 final class WeatherNetworkService: BaseNetworkService, WeatherNetworkServiceProtocol {
 
-    func fetchForecastDataFor(lat: String, lon: String, days: Int) async -> Result<WeatherForecastResponse, WeatherNetworkServiceError> {
-
-        let result: Result<WeatherForecastResponse, NetworkError> = await runRequest(request: Requests.forecast(lat: lat, lon: lon, days: days))
-
-        switch result {
-        case .success(let data):
-            return .success(data)
-        case .failure(let error):
+    func fetchForecastDataFor(lat: String, lon: String, days: Int) async throws(WeatherNetworkServiceError) -> WeatherForecastResponse {
+        do {
+            return try await runRequest(Requests.forecast(lat: lat, lon: lon, days: days))
+        } catch {
             switch error {
-            case let .responseError(code, message):
-                return .failure(.apiError(stausCode: code, message: message))
-            default:
-                return .failure(.coreError(message: error.localizedDescription))
+                case let .responseError(code, message):
+                    throw .apiError(stausCode: code, message: message)
+                default:
+                    throw .coreError(message: error.localizedDescription)
+            }
+        }
+    }
+
+    func fetchCurrentDataFor(lat: String, lon: String) async throws(WeatherNetworkServiceError) -> WeatherForecastResponse {
+        do {
+            return try await runRequest(Requests.current(lat: lat, lon: lon))
+        } catch {
+            switch error {
+                case let .responseError(code, message):
+                    throw .apiError(stausCode: code, message: message)
+                default:
+                    throw .coreError(message: error.localizedDescription)
             }
         }
     }

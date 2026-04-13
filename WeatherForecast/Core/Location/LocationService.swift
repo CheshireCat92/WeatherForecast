@@ -24,14 +24,12 @@ final class LocationService: NSObject {
     }
 
     private func start() {
-        guard locationManager.isPermissionsGranted() else {
-            locationManager.requestWhenInUseAuthorization()
-            return
-        }
+        guard !locationManager.isPermissionsGranted() else { return }
+        locationManager.requestWhenInUseAuthorization()
     }
 
     func fetchCurrentLocation() async throws-> LocationDataModel {
-        guard self.continuation == nil else {
+        guard continuation == nil else {
             throw LocationServiceErrors.someProblems
         }
         return try await withCheckedThrowingContinuation { [weak self] continuation in

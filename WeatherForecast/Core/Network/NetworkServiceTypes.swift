@@ -16,6 +16,6 @@ enum BaseBodyDataType {
 enum NetworkError: Error {
     case responseError(code: Int, message: String)
     case requestError(message: String)
-    case decodeError
+    case decodeError(message: String)
     case buildBaseRequestError
 }

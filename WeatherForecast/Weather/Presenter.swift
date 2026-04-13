@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 protocol PresenterProtocol: AnyObject {
     func updateInfoState(_ state: PresenterInfoState)
     func didFailWithError(error: String)
